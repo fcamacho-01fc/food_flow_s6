@@ -1,0 +1,26 @@
+{
+  "name": "foodflow",
+  "version": "1.0.0",
+  "description": "API express and TS",
+  "main": "src/server.ts",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "tsx src/server.ts",
+    "cluster": "tsx scripts/start-cluster.ts",
+    "test:duplicates": "tsx scripts/test-duplicates.ts",
+    "test:payment": "tsx scripts/test-payment.ts",
+    "test:load": "tsx scripts/test-load.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.4.1",
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
