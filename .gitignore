@@ -1,54 +1,22 @@
-# --- Dependencias ---
+# Dependencies
 node_modules/
-jspm_packages/
-web_modules/
 
-# --- Compilación de TypeScript ---
-# Ignora la carpeta de salida (ajústala si en tu tsconfig.json usas 'build' u otro nombre)
+# Build
 dist/
-out/
-build/
-tsbuildinfo/
 
-# --- Variables de Entorno (¡Seguridad!) ---
+# Environment variables
 .env
 .env.local
-.env.*.local
-.env.development
-.env.test
-.env.production
 
-# --- Logs y Errores ---
-logs
+# Logs
 *.log
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
 
-# --- Archivos del Sistema Operativo ---
+# macOS
 .DS_Store
-Thumbs.db
-Desktop.ini
 
-# --- Configuraciones de Editores (Opcional) ---
+# VS Code
 .vscode/
-# Nota: Si compartes la configuración de VSCode con tu equipo, conserva .vscode/extensions.json
-.idea/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.swp
 
-# --- Cobertura de Pruebas (Si usas Jest/Vitest) ---
-coverage/
-.nyc_output/
-
-# --- Caché de herramientas ---
-.eslintcache
-.prettiercache
-.parcel-cache
-.turbo/
-.next/
+# TypeScript
+*.tsbuildinfo
