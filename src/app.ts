@@ -10,19 +10,13 @@ import { errorMiddleware } from "./middlewares/error.middleware";
 export const app = express();
 
 app.use(express.json());
-
 app.use(requestLogger);
-
 app.get("/health", (req, res) => {
   res.json({
     status: "ok",
   });
 });
-
 app.use("/api/orders", orderRouter);
-
 app.use("/api/restaurants", restaurantRouter);
-
 app.use("/api/diagnostics", diagnosticsRouter);
-
 app.use(errorMiddleware);

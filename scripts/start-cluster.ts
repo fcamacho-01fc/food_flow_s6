@@ -1,41 +1,31 @@
-import { ChildProcess, spawn } from "child_process";
+import { spawn } from "node:child_process";
 
-const ports = [3001, 3002, 3003];
+const instances = [
+  { id: "api-1", port: 3001 },
+  { id: "api-2", port: 3002 },
+  { id: "api-3", port: 3003 },
+];
 
-const processes: ChildProcess[] = [];
-
-for (let index = 0; index < ports.length; index++) {
-  const port = ports[index];
-
-  const instanceId = `api-${index + 1}`;
-
-  const command = process.platform === "win32" ? "npx.cmd" : "npx";
-
-  const child = spawn(command, ["tsx", "src/server.ts"], {
+for (const instance of instances) {
+  const child = spawn(process.execPath, ["--import", "tsx", "src/server.ts"], {
     env: {
       ...process.env,
-
-      PORT: String(port),
-
-      INSTANCE_ID: instanceId,
+      PORT: String(instance.port),
+      INSTANCE_ID: instance.id,
     },
-
     stdio: "inherit",
   });
 
-  processes.push(child);
+  child.on("error", (error) => {
+    console.error(
+      `Error starting ${instance.id} on port ${instance.port}:`,
+      error,
+    );
+  });
+
+  child.on("exit", (code) => {
+    console.log(
+      `${instance.id} on port ${instance.port} stopped with code ${code}`,
+    );
+  });
 }
-
-function shutdown() {
-  console.log("\nStopping cluster...");
-
-  for (const child of processes) {
-    child.kill();
-  }
-
-  process.exit();
-}
-
-process.on("SIGINT", shutdown);
-
-process.on("SIGTERM", shutdown);

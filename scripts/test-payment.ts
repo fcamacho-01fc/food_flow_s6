@@ -1,63 +1,63 @@
-const port = 3001;
-
-const paymentRequestBody = {
-  customerId: "customer-payment",
-
-  restaurantId: "restaurant-1",
-
-  items: [
-    {
-      productId: "premium-burger",
-
-      quantity: 1,
-
-      price: 850,
-    },
-  ],
-};
+const BASE_URL = "http://localhost:3001";
 
 async function main() {
   console.log("Creating order with simulated payment timeout...");
 
-  const response = await fetch(`http://localhost:${port}/api/orders`, {
-    method: "POST",
+  const idempotencyKey = `PAYMENT-${Date.now()}`;
 
+  const response = await fetch(`${BASE_URL}/api/orders`, {
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
-
-      "Idempotency-Key": `PAY-${Date.now()}`,
-
+      "Idempotency-Key": idempotencyKey,
       "X-Payment-Scenario": "timeout-after-charge",
     },
-
-    body: JSON.stringify(body),
+    body: JSON.stringify({
+      customerId: "customer-1",
+      restaurantId: "restaurant-1",
+      items: [
+        {
+          productId: "burger-1",
+          quantity: 1,
+          price: 150,
+        },
+      ],
+    }),
   });
 
-  const order = await response.json();
+  const body = await response.json();
 
-  console.log("\nOrder response:");
+  console.log("\nOrder response");
+  console.log("Status:", response.status);
+  console.log("Response:", body);
 
-  console.log(order);
+  // Esperamos un poco para permitir que el primer pago,
+  // que hizo timeout, termine en segundo plano.
+  await new Promise((resolve) => setTimeout(resolve, 1500));
 
-  await new Promise((resolve) => setTimeout(resolve, 1800));
-
-  const diagnostics = await fetch(
-    `http://localhost:${port}/api/diagnostics/payment-charges`,
+  const chargesResponse = await fetch(
+    `${BASE_URL}/api/diagnostics/payment-charges`,
   );
 
-  const charges = await diagnostics.json();
+  const chargesBody = await chargesResponse.json();
 
-  console.log("\nPayment provider records:");
+  console.log("\nPayment diagnostics");
+  console.log(chargesBody);
 
-  console.table(
-    charges.data.map((charge: any) => ({
-      transactionId: charge.transactionId,
+  const allCharges = chargesBody.data ?? [];
 
-      orderId: charge.orderId,
-
-      amount: charge.amount,
-    })),
+  const chargesForThisOrder = allCharges.filter(
+    (charge: any) => charge.orderId === body.id,
   );
+
+  console.log("\nExpected charges: 1");
+  console.log("Actual charges:", chargesForThisOrder.length);
+
+  if (chargesForThisOrder.length > 1) {
+    console.log("\n Duplicate payment detected.");
+  } else {
+    console.log("\nNo duplicate payment detected.");
+  }
 }
 
 main().catch(console.error);
