@@ -1,62 +1,65 @@
+import { delay } from "../utils/delay";
 import { Restaurant } from "../types/restaurant.types";
 
-import { postgres } from "../database/postgres";
-
 class RestaurantRepository {
+  // TODO: Replace this with a real database connection and queries
+  private restaurants: Restaurant[] = [
+    {
+      id: "restaurant-1",
+      name: "Burger Factory",
+      open: true,
+    },
+    {
+      id: "restaurant-2",
+      name: "Pizza Central",
+      open: true,
+    },
+    {
+      id: "restaurant-3",
+      name: "Sushi House",
+      open: true,
+    },
+    {
+      id: "restaurant-4",
+      name: "Taco Lab",
+      open: true,
+    },
+    {
+      id: "restaurant-5",
+      name: "Green Kitchen",
+      open: true,
+    },
+  ];
+
   async findAll(): Promise<Restaurant[]> {
-    const result = await postgres.query(
-      `SELECT id, name, open
-        FROM restaurants
-        ORDER BY name`,
-    );
-    return result.rows;
+    await delay(40);
+
+    return [...this.restaurants];
   }
 
   async findById(id: string): Promise<Restaurant | null> {
-    const result = await postgres.query(
-      `SELECT id, name, open      
-        FROM restaurants
-        WHERE id = $1 `,
-      [id],
-    );
+    await delay(35);
 
-    return result.rows[0] ?? null;
-  }
-
-  async create(restaurant: Restaurant): Promise<Restaurant> {
-    const result = await postgres.query(
-      `INSERT INTO restaurants (id,name,open)
-      VALUES ($1, $2, $3)
-      RETURNING id,name,open`,
-      [restaurant.id, restaurant.name, restaurant.open],
-    );
-
-    return result.rows[0];
+    return this.restaurants.find((restaurant) => restaurant.id === id) ?? null;
   }
 
   async updateOpenStatus(
     id: string,
     open: boolean,
   ): Promise<Restaurant | null> {
-    const result = await postgres.query(
-      `UPDATE restaurants
-       SET open = $2
-       WHERE id = $1
-       RETURNING id, name, open`,
-      [id, open],
+    await delay(50);
+
+    const restaurant = this.restaurants.find(
+      (restaurant) => restaurant.id === id,
     );
 
-    return result.rows[0] ?? null;
-  }
+    if (!restaurant) {
+      return null;
+    }
 
-  async delete(id: string): Promise<boolean> {
-    const result = await postgres.query(
-      `DELETE FROM restaurants
-       WHERE id = $1`,
-      [id],
-    );
+    restaurant.open = open;
 
-    return (result.rowCount ?? 0) > 0;
+    return { ...restaurant };
   }
 }
 
