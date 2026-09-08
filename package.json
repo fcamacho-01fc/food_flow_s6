@@ -6,10 +6,6 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "start": "tsx src/server.ts",
-    "cluster": "tsx scripts/start-cluster.ts",
-    "test:duplicates": "tsx scripts/test-duplicates.ts",
-    "test:payment": "tsx scripts/test-payment.ts",
-    "test:load": "tsx scripts/test-load.ts",
     "typecheck": "tsc --noEmit"
   },
   "license": "ISC",
