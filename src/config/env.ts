@@ -3,5 +3,12 @@ export const env = {
   instanceId: process.env.INSTANCE_ID ?? "local",
   paymentTimeoutMs: Number(process.env.PAYMENT_TIMEOUT_MS ?? 500),
 
-  //TODO: implement database connection
+  //implement database connection
+  database: {
+    host: process.env.DB_HOST ?? "localhost",
+    port: Number(process.env.DB_PORT ?? 5432),
+    user: process.env.DB_USER ?? "foodflow",
+    password: process.env.DB_PASSWORD ?? "foodflow123",
+    database: process.env.DB_NAME ?? "foodflow",
+  },
 };
