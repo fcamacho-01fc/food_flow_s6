@@ -6,12 +6,29 @@ export interface OrderItem {
   productId: string;
   quantity: number;
   price: number;
+  name: string;
 }
 
 export interface CreateOrderDTO {
   customerId: string;
   restaurantId: string;
   items: OrderItem[];
+}
+
+export interface CreateOrderData {
+  customerId: string;
+  restaurantId: string;
+
+  items: {
+    productId: string;
+    name: string;
+    quantity: number;
+    price: number;
+  }[];
+
+  total: number;
+
+  status?: OrderStatus;
 }
 
 export interface Order {

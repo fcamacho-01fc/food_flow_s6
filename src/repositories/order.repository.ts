@@ -1,83 +1,39 @@
-import { randomUUID } from "crypto";
-
-import { CreateOrderDTO, Order } from "../types/order.types";
-
-import { delay } from "../utils/delay";
+import { OrderModel } from "../models/order.model";
+import { CreateOrderData, OrderStatus } from "../types/order.types";
 
 class OrderRepository {
-  private orders: Order[] = [];
-
-  constructor() {
-    this.seed();
+  async create(data: CreateOrderData) {
+    return OrderModel.create(data);
   }
 
-  private seed(): void {
-    for (let i = 0; i < 60; i++) {
-      const restaurantNumber = (i % 5) + 1;
-
-      this.orders.push({
-        id: randomUUID(),
-        customerId: `customer-${i + 1}`,
-        restaurantId: `restaurant-${restaurantNumber}`,
-        items: [
-          {
-            productId: `product-${i + 1}`,
-            quantity: 1,
-            price: 100 + (i % 10) * 10,
-          },
-        ],
-        total: 100 + (i % 10) * 10,
-        status: "paid",
-        createdAt: new Date(),
-      });
-    }
+  async findAll() {
+    return OrderModel.find().sort({ createdAt: -1 });
   }
 
-  async findAll(): Promise<Order[]> {
-    await delay(70);
-
-    return [...this.orders];
+  async findById(id: string) {
+    return OrderModel.findById(id);
   }
-
-  async findById(id: string): Promise<Order | null> {
-    await delay(40);
-
-    return this.orders.find((order) => order.id === id) ?? null;
-  }
-
-  async create(dto: CreateOrderDTO): Promise<Order> {
-    await delay(60);
-
-    const total = dto.items.reduce(
-      (sum, item) => sum + item.price * item.quantity,
-      0,
+  // Este metodo hace el update en la base de datos mongo, completa el service para que el controller pueda hacer el update de un order, recuerda que repository es el encargado de la persistencia de datos y service es el encargado de la lógica de negocio
+  async updateStatus(id: string, status: OrderStatus) {
+    return OrderModel.findByIdAndUpdate(
+      id,
+      { status },
+      {
+        new: true,
+        runValidators: true,
+      },
     );
-
-    const order: Order = {
-      id: randomUUID(),
-      customerId: dto.customerId,
-      restaurantId: dto.restaurantId,
-      items: dto.items,
-      total,
-      status: "pending",
-      createdAt: new Date(),
-    };
-
-    this.orders.push(order);
-
-    return order;
   }
+  // Este metodo hace el delete en la base de datos mongo, completa el service para que el controller pueda hacer el delete de un order, recuerda que repository es el encargado de la persistencia de datos y service es el encargado de la lógica de negocio
+  async delete(id: string) {
+    const result = await OrderModel.findByIdAndDelete(id);
 
-  async save(order: Order): Promise<Order> {
-    await delay(50);
-
-    const index = this.orders.findIndex((current) => current.id === order.id);
-
-    if (index >= 0) {
-      this.orders[index] = order;
-    }
-
-    return order;
+    return result !== null;
+  }
+  async findByRestaurant(restaurantId: string) {
+    return OrderModel.find({
+      restaurantId,
+    });
   }
 }
 

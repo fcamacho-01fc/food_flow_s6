@@ -11,4 +11,6 @@ export const env = {
     password: process.env.DB_PASSWORD ?? "foodflow123",
     database: process.env.DB_NAME ?? "foodflow",
   },
+
+  //  TODO:   //implement mongo database connection configuration
 };

@@ -1,11 +1,13 @@
 import { app } from "./app";
 
 import { env } from "./config/env";
+import { connectMongoDB } from "./database/mongo";
 import { testConnection } from "./database/postgres";
 
 async function start() {
   try {
     await testConnection();
+    // TODO: conectar a mongoDB
     app.listen(env.port, () => {
       console.log(
         [
