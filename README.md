@@ -324,6 +324,82 @@ Esto:
 
 Utilízalo únicamente cuando quieras reconstruir el ambiente desde cero.
 
+# Para MongoDB
+
+## Crear una orden
+
+```http
+POST http://localhost:3000/api/orders
+```
+
+```bash
+Body:
+
+{
+  "customerId": "customer-1",
+  "restaurantId": "restaurant-1",
+  "items": [
+    {
+      "productId": "burger-1",
+      "name": "Classic Burger",
+      "quantity": 2,
+      "price": 150
+    }
+  ],
+  "total": 300,
+  "status": "pending"
+}
+```
+
+Guarda el \_id generado.
+
+## Consultar órdenes
+
+```http
+GET http://localhost:3000/api/orders
+GET http://localhost:3000/api/orders/<orderId>
+```
+
+## Actualizar estado
+
+```http
+PATCH http://localhost:3000/api/orders/<orderId>/status
+```
+
+```bash
+Body:
+
+{
+  "status": "paid"
+}
+```
+
+Estados permitidos:
+
+- pending
+- paid
+- cancelled
+
+## Eliminar orden
+
+```http
+DELETE http://localhost:3000/api/orders/<orderId>
+```
+
+## Comprobar persistencia
+
+Crea una orden, detén Node.js y vuelve a iniciarlo:
+
+```bash
+npm start
+```
+
+Después consulta:
+
+```http
+GET http://localhost:3000/api/orders
+```
+
 ---
 
 # Flujo completo
